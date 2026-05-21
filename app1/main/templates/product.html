@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - MoveMasters{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalog' %}">Каталог</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Изображение -->
+        <div class="col-lg-6 mb-4">
+            <div class="product-image-large">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+                {% else %}
+                <img src="https://via.placeholder.com/500x500/2E8B57/FFFFFF?text=Изображение+товара" 
+                     class="img-fluid rounded" alt="{{ product.name }}">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Информация -->
+        <div class="col-lg-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            <p class="text-muted mb-4">Категория: {{ product.category.name }}</p>
+            
+            <div class="mb-4">
+                <h3 class="eco-text">{{ product.price }} ₽</h3>
+                {% if product.stock_quantity > 0 %}
+                <p class="text-success">
+                    <i class="bi bi-check-circle-fill"></i> В наличии ({{ product.stock_quantity }} шт.)
+                </p>
+                {% else %}
+                <p class="text-danger">
+                    <i class="bi bi-x-circle-fill"></i> Нет в наличии
+                </p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <h5>Описание</h5>
+                <p>{{ product.description }}</p>
+            </div>
+
+            {% if product.material %}
+            <div class="mb-4">
+                <h5>Характеристики</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Материал:</strong> {{ product.material }}</li>
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="d-grid gap-2 d-md-flex mb-5">
+                {% if product.stock_quantity > 0 %}
+                <button class="btn eco-btn btn-lg me-2 add-to-cart" 
+                        onclick="addToCart({{ product.id }}, '{{ product.name|escapejs }}', {{ product.price }})">
+                    <i class="bi bi-cart-plus me-2"></i>Добавить в корзину
+                </button>
+                {% endif %}
+                <a href="{% url 'catalog' %}" class="btn btn-outline-eco btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>Назад в каталог
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Отзывы -->
+    <div class="mt-5">
+        <h3 class="mb-4">Отзывы</h3>
+        
+        {% if reviews %}
+        <div class="row">
+            {% for review in reviews %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6 class="card-title">{{ review.user.username }}</h6>
+                            <div class="text-warning">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="card-text">{{ review.comment }}</p>
+                        <small class="text-muted">{{ review.created_at|date:"d.m.Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>Пока нет отзывов. Будьте первым!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Простая функция добавления в корзину (работает сразу)
+function addToCart(id, name, price) {
+    // Получаем текущую корзину из localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Ищем, есть ли уже такой товар
+    let found = false;
+    for (let item of cart) {
+        if (item.id == id) {
+            item.quantity += 1;
+            found = true;
+            break;
+        }
+    }
+    
+    // Если не нашли — добавляем новый
+    if (!found) {
+        cart.push({
+            id: id,
+            name: name,
+            price: price,
+            quantity: 1
+        });
+    }
+    
+    // Сохраняем обратно в localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Показываем сообщение
+    alert('✅ "' + name + '" добавлен в корзину!');
+    
+    // Можно обновить иконку корзины в шапке (если есть)
+    updateCartBadge();
+}
+
+// Функция для обновления бейджа в корзине
+function updateCartBadge() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalItems = 0;
+    
+    for (let item of cart) {
+        totalItems += item.quantity;
+    }
+    
+    // Если есть элемент с id cart-badge — обновляем
+    let badge = document.getElementById('cart-badge');
+    if (badge) {
+        badge.textContent = totalItems;
+        badge.style.display = totalItems > 0 ? 'inline' : 'none';
+    }
+}
+
+// При загрузке страницы обновляем бейдж
+document.addEventListener('DOMContentLoaded', updateCartBadge);
+</script>
+{% endblock %}

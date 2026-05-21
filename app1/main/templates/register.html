@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация | MoveMasters{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="simple-form">
+                <h2 class="mb-4">Регистрация</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" name="username" class="form-control" required>
+                        <small class="text-muted">До 150 символов: буквы, цифры, @/./+/-/_</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" name="password1" class="form-control" required>
+                        <small class="text-muted">Минимум 8 символов, не только цифры</small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Подтвердите пароль</label>
+                        <input type="password" name="password2" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войдите</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

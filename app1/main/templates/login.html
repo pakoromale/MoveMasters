@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход | MoveMasters{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="simple-form">
+                <h2 class="mb-4">Вход</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">Войти</button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

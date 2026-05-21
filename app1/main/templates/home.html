@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - MoveMasters{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1>Спорт начинается с MoveMasters</h1>
+                <p class="lead">Всё для тренировок и активного отдыха. Достигай новых высот с лучшей экипировкой.</p>
+                <a href="{% url 'catalog' %}" class="btn eco-btn btn-lg">
+                    <i class="bi bi-cart3 me-2"></i>Смотреть каталог
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Почему выбирают нас</h2>
+        <p class="text-center text-muted mb-5">Преимущества для ваших тренировок и целей</p>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        🏋️
+                    </div>
+                    <h4 class="eco-text">Высокое качество</h4>
+                    <p class="text-muted">Профессиональные материалы, устойчивые к износу и интенсивным нагрузкам.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        🚚
+                    </div>
+                    <h4 class="eco-text">Быстрая доставка</h4>
+                    <p class="text-muted">Бесплатно от 3000₽ по Ульяновску. Отправляем в день заказа.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        ✅
+                    </div>
+                    <h4 class="eco-text">Гарантия</h4>
+                    <p class="text-muted">Официальная гарантия от производителей на весь ассортимент.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="products-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col">
+                <h2 class="section-title">Популярные товары</h2>
+                <p class="text-center text-muted">Самые востребованные товары</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for product in products|slice:":4" %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="product-card">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="product-image" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200/2E8B57/FFFFFF?text=Эко+товар" class="product-image" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="product-body">
+                        <h5 class="product-title">{{ product.name }}</h5>
+                        <p class="text-muted small">{{ product.description|truncatechars:60 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="product-price">{{ product.price }} ₽</span>
+                            <a href="{% url 'product_detail' product.id %}" class="btn eco-btn btn-sm">
+                                <i class="bi bi-eye me-1"></i>Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    <p>Товаров пока нет. Добавьте их через админку!</p>
+                    <a href="/admin/" class="btn eco-btn mt-2">Перейти в админку</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'catalog' %}" class="btn btn-outline-eco btn-lg">
+                Весь каталог <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-eco text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Готовы к новым спортивным достижениям?</h2>
+        <p class="lead mb-4">Присоединяйтесь к тысячам атлетов, которые выбрали MoveMasters для своих побед.</p>
+        <a href="{% url 'catalog' %}" class="btn btn-light btn-lg eco-text">
+            Начать покупки <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}

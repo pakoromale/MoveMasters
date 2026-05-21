@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}О нас | MoveMasters{% endblock %}
+
+{% block content %}
+<section class="about-section py-5">
+    <div class="container">
+        <h1 class="text-center mb-4">О нас</h1>
+        
+        <!-- Миссия -->
+        <div class="row align-items-center mb-5">
+            <div class="col-md-7">
+                <h2>Наша миссия</h2>
+                <p class="lead">MoveMasters — это энергия движения и правильная экипировка. Мы объединяем тех, кто выбирает активный образ жизни и не стоит на месте.</p>
+            </div>
+        </div>
+
+        <!-- Почему мы? (карточки вместо списка) -->
+        <h2 class="text-center mb-4">Почему мы?</h2>
+        <div class="row text-center mb-5">
+            <div class="col-md-3 mb-3">
+                <div class="p-3 border rounded h-100 shadow-sm">
+                    <div style="font-size: 40px;">✅</div>
+                    <p class="mt-2 mb-0">Только проверенный инвентарь для спорта и фитнеса</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="p-3 border rounded h-100 shadow-sm">
+                    <div style="font-size: 40px;">👕</div>
+                    <p class="mt-2 mb-0">Одежда и обувь от ведущих мировых брендов</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="p-3 border rounded h-100 shadow-sm">
+                    <div style="font-size: 40px;">🎯</div>
+                    <p class="mt-2 mb-0">Поможем подобрать экипировку под ваш вид спорта</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="p-3 border rounded h-100 shadow-sm">
+                    <div style="font-size: 40px;">🚚</div>
+                    <p class="mt-2 mb-0">Быстрая доставка по всему городу</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок с цифрами (лёгкая статистика) -->
+        <div class="row text-center bg-dark text-white py-4 rounded mb-5" style="background: #1a1a2e !important;">
+            <div class="col-md-3">
+                <h3 class="fw-bold">5000+</h3>
+                <p>довольных клиентов</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="fw-bold">50+</h3>
+                <p>брендов-партнёров</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="fw-bold">3 года</h3>
+                <p>на рынке спорта</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="fw-bold">24/7</h3>
+                <p>поддержка клиентов</p>
+            </div>
+        </div>
+
+        <!-- Цитата / Наша команда -->
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="about-image">
+                    <img src="/static/images/about-team.jpg" alt="Наша команда" class="img-fluid rounded shadow" style="max-width:100%; border-radius:15px;" onerror="this.src='https://via.placeholder.com/500x300?text=MoveMasters+Team'">
+                </div>
+            </div>
+            <div class="col-md-6">
+                
+                    <p class="mb-2 fs-5">"Мы не просто продаём экипировку — мы заряжаем энергией. Каждый товар в MoveMasters проходит строгий отбор, чтобы вы чувствовали себя уверенно и достигали новых высот."</p>
+                    <footer class="blockquote-footer mt-2">Команда <cite title="MoveMasters">MoveMasters</cite></footer>
+                
+                
+            </div>
+        </div>
+
+        <!-- Кнопка в каталог (для вовлечения) -->
+        <button type="submit" class="btn btn-success w-100" style="width:300px">Перейти в каталог</button>
+    </div>
+</section>
+{% endblock %}
