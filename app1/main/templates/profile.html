@@ -1,85 +1,100 @@
 {% extends 'base.html' %}
-
-{% block title %}Личный кабинет | MoveMasters{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row">
-        <!-- Левая колонка - профиль -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Ваш профиль</h3>
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label">Имя пользователя</label>
-                            <input type="text" class="form-control" value="{{ user.username }}" disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" value="{{ user.email }}" disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Имя</label>
-                            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Фамилия</label>
-                            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                        </div>
-                        <button type="submit" class="btn btn-success w-100">Сохранить изменения</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+<!-- Заголовок -->
+<section style="padding: 60px 0 40px 0;">
+    <div class="container">
+        <h1 class="section-title" style="margin-bottom: 16px;">Личный кабинет</h1>
+        <p style="text-align: center; color: var(--text-light); max-width: 600px; margin: 0 auto;">Здравствуйте, {{ user.username }}!</p>
+    </div>
+</section>
+
+<!-- Основной контент профиля -->
+<section class="container" style="padding: 0 0 60px 0;">
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 40px;">
         
-        <!-- Правая колонка - история заказов -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">История заказов</h3>
-                    
-                    {% if orders %}
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>№ заказа</th>
-                                    <th>Дата</th>
-                                    <th>Сумма</th>
-                                    <th>Статус</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for order in orders %}
-                                <tr>
-                                    <td>#{{ order.id }}</td>
-                                    <td>{{ order.created_at|date:"d.m.Y" }}</td>
-                                    <td>{{ order.total }} руб.</td>
-                                    <td>
-                                        <span class="badge 
-                                            {% if order.status == 'delivered' %}bg-success
-                                            {% elif order.status == 'cancelled' %}bg-danger
-                                            {% else %}bg-warning{% endif %}">
-                                            {{ order.get_status_display }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+        <!-- Левая колонка - меню -->
+        <div style="background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 20px 0; height: fit-content;">
+            <div style="text-align: center; padding: 20px 20px; border-bottom: 1px solid var(--border-color);">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--eco-green) 0%, var(--eco-dark) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 36px; color: white;">
+                    👤
+                </div>
+                <h4 style="margin-bottom: 5px;">{{ user.username }}</h4>
+                <p class="text-muted small">{{ user.email }}</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="border-bottom: 1px solid var(--border-color);">
+                    <a href="#" style="display: block; padding: 15px 25px; color: var(--text-dark); font-weight: 500; background: var(--bg-light); border-left: 3px solid var(--eco-green);">
+                        📋 Мои данные
+                    </a>
+                </li>
+                <li style="border-bottom: 1px solid var(--border-color);">
+                    <a href="#" style="display: block; padding: 15px 25px; color: var(--text-dark); font-weight: 500;">
+                        📦 Мои заказы
+                    </a>
+                </li>
+                <li style="border-bottom: 1px solid var(--border-color);">
+                    <a href="#" style="display: block; padding: 15px 25px; color: var(--text-dark); font-weight: 500;">
+                        ❤️ Избранное
+                    </a>
+                </li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" style="display: block; width: 100%; text-align: left; padding: 15px 25px; background: none; border: none; color: #dc3545; font-weight: 500; cursor: pointer; font-size: 16px;">
+                            🚪 Выйти
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Правая колонка - данные пользователя -->
+        <div style="background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 30px;">
+            <h3 style="color: var(--eco-green); margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color);">Мои данные</h3>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <label class="form-label">Имя</label>
+                        <input type="text" class="form-control" value="{{ user.first_name }}" placeholder="Ваше имя">
                     </div>
-                    {% else %}
-                    <div class="text-center py-4">
-                        <p class="text-muted">У вас пока нет заказов</p>
-                        <a href="{% url 'catalog' %}" class="btn btn-outline-success">Перейти в каталог</a>
+                    <div>
+                        <label class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" value="{{ user.last_name }}" placeholder="Ваша фамилия">
                     </div>
-                    {% endif %}
+                    <div>
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="{{ user.email }}" placeholder="Email">
+                    </div>
+                    <div>
+                        <label class="form-label">Телефон</label>
+                        <input type="tel" class="form-control" placeholder="+7 (___) ___-__-__">
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label class="form-label">Адрес доставки</label>
+                        <input type="text" class="form-control" placeholder="Город, улица, дом, квартира">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; display: flex; gap: 15px;">
+                    <button type="submit" class="eco-btn">Сохранить изменения</button>
+                    <a href="#" style="padding: 12px 25px; background: transparent; border: 1px solid var(--border-color); border-radius: 50px; color: var(--text-dark);">Сменить пароль</a>
+                </div>
+            </form>
+
+            <!-- Блок с последними заказами (кратко) -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: var(--eco-green); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color);">Последние заказы</h3>
+                
+                <div style="background: var(--bg-light); border-radius: 12px; padding: 20px; text-align: center;">
+                    <p class="text-muted">У вас пока нет заказов</p>
+                    <a href="/catalog" class="eco-btn" style="margin-top: 10px;">Перейти в каталог</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

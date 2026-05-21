@@ -129,3 +129,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',  # это по умолчанию
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+]
+
+LOGIN_REDIRECT_URL = '/profile/'  # после входа на профиль
+LOGIN_URL = '/login/'              # страница входа
+LOGOUT_REDIRECT_URL = '/'          # после выхода на главную

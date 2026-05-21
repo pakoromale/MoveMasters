@@ -1,126 +1,90 @@
 {% extends 'base.html' %}
-
-{% block title %}Контакты | MoveMasters{% endblock %}
+{% load static %}
 
 {% block content %}
-<section class="contacts-section">
+<!-- Заголовок -->
+<section style="padding: 60px 0 40px 0;">
     <div class="container">
-        <h1>Контакты</h1>
+        <h1 class="section-title" style="margin-bottom: 16px;">Контакты</h1>
+        <p style="text-align: center; color: var(--text-light); max-width: 600px; margin: 0 auto;">Мы всегда на связи — выберите удобный способ</p>
+    </div>
+</section>
+
+<!-- Карточки с контактами -->
+<section class="container" style="padding: 0 0 60px 0;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
         
-        <!-- Карта -->
-        <div class="contact-map" style="margin-bottom: 40px;">
-            <iframe 
+        <!-- Телефон -->
+        <div class="feature-card" style="padding: 30px;">
+            <div class="feature-icon" style="margin: 0 auto 20px;">📞</div>
+            <h3 style="font-size: 22px; margin-bottom: 15px;">Звонок</h3>
+            <p style="font-size: 20px; font-weight: bold; color: var(--eco-green);">+7 (800) 123-45-67</p>
+            <p class="text-muted" style="margin-top: 10px;">Ежедневно с 9:00 до 21:00</p>
+        </div>
+
+        <!-- Email -->
+        <div class="feature-card" style="padding: 30px;">
+            <div class="feature-icon" style="margin: 0 auto 20px;">✉️</div>
+            <h3 style="font-size: 22px; margin-bottom: 15px;">Email</h3>
+            <p style="font-size: 18px; font-weight: bold; color: var(--eco-green);">info@movemasters.ru</p>
+            <p class="text-muted" style="margin-top: 10px;">Ответим в течение 24 часов</p>
+        </div>
+
+        <!-- Адрес -->
+        <div class="feature-card" style="padding: 30px;">
+            <div class="feature-icon" style="margin: 0 auto 20px;">📍</div>
+            <h3 style="font-size: 22px; margin-bottom: 15px;">Адрес</h3>
+            <p style="font-size: 16px;">г. Москва, ул. Спортивная, д. 15</p>
+            <p class="text-muted" style="margin-top: 10px;">м. Спортивная, выход №2</p>
+        </div>
+    </div>
+</section>
+
+<!-- Форма обратной связи + карта -->
+<section style="background: var(--bg-light); padding: 60px 0;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            
+            <!-- Форма -->
+            <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                <h3 style="color: var(--eco-green); margin-bottom: 25px;">Напишите нам</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control" placeholder="Ваше имя" required>
+                    <input type="email" class="form-control" placeholder="Ваш Email" required>
+                    <input type="text" class="form-control" placeholder="Тема сообщения">
+                    <textarea class="form-control" rows="5" placeholder="Сообщение..." required></textarea>
+                    <button type="submit" class="eco-btn" style="width: 100%;">Отправить →</button>
+                </form>
+            </div>
+            
+            <!-- Карта (заглушка) -->
+            <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                <h3 style="color: var(--eco-green); margin-bottom: 25px;">Как нас найти</h3>
+                <iframe 
                 src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&source=constructor" 
                 width="100%" 
                 height="300" 
                 frameborder="0"
                 title="MoveMasters на карте">
             </iframe>
-        </div>
-        
-        <div class="contacts-wrapper" style="display: flex; gap: 40px; flex-wrap: wrap;">
-            <!-- Контактная информация -->
-            <div class="contact-info" style="flex: 1; min-width: 250px;">
-                <h2>Наши контактные данные</h2>
-                
-                <div class="contact-item" style="margin-bottom: 20px;">
-                    <strong>📧 Email:</strong>
-                    <p style="margin: 5px 0 0;">support@MoveMasters.ru</p>
-                </div>
-                
-                <div class="contact-item" style="margin-bottom: 20px;">
-                    <strong>📞 Телефон:</strong>
-                    <p style="margin: 5px 0 0;">+7 (999) 123-45-67</p>
-                </div>
-                
-                <div class="contact-item" style="margin-bottom: 20px;">
-                    <strong>📍 Адрес:</strong>
-                    <p style="margin: 5px 0 0;">г. Ульяновск, ул. Спортивная, д. 15</p>
-                </div>
-                
-                <div class="contact-item" style="margin-bottom: 20px;">
-                    <strong>🕒 Часы работы:</strong>
-                    <p style="margin: 5px 0 0;">Пн-Пт: 9:00-18:00<br>Сб-Вс: 10:00-16:00</p>
-                </div>
-
-                <!-- Соцсети -->
-                <div style="margin-top: 30px;">
-                    <strong>📱 Мы в соцсетях:</strong>
-                    <div style="margin-top: 10px; display: flex; gap: 15px;">
-                        <a href="#" style="text-decoration: none; color: #333;">VK</a>
-                        <a href="#" style="text-decoration: none; color: #333;">Telegram</a>
-                        <a href="#" style="text-decoration: none; color: #333;">WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Форма обратной связи -->
-            <div class="contact-form" style="flex: 1; min-width: 300px;">
-                <h2>Форма обратной связи</h2>
-                
-                {% if messages %}
-                    {% for message in messages %}
-                        <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
-                <form method="post">
-                    {% csrf_token %}
-                    <div style="margin-bottom: 15px;">
-                        <input type="text" name="name" placeholder="Ваше имя" required
-                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <input type="email" name="email" placeholder="Ваш email" required
-                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <input type="text" name="subject" placeholder="Тема сообщения"
-                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <textarea name="message" rows="5" placeholder="Ваше сообщение" required
-                                  style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; resize: vertical;"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn" style="width: 100%; padding: 12px; background: #064d9e; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
-                        Отправить сообщение
-                    </button>
-                </form>
-                
-                <p style="font-size: 12px; color: #999; margin-top: 15px; text-align: center;">
-                    Мы ответим вам в течение 24 часов
+                <p style="margin-top: 20px; font-size: 14px; color: var(--text-light);">
+                    <strong>🕐 Часы работы магазина:</strong><br>
+                    Пн-Пт: 10:00 - 20:00<br>
+                    Сб-Вс: 11:00 - 18:00
                 </p>
             </div>
         </div>
-        
-        <!-- Часто задаваемые вопросы -->
-        <div style="margin-top: 60px;">
-            <h2 style="text-align: center; margin-bottom: 30px;">Часто задаваемые вопросы</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
-                    <h3 style="margin: 0 0 10px;">Как оформить заказ?</h3>
-                    <p style="margin: 0; color: #666;">Добавьте товары в корзину и оформите заказ через форму на сайте.</p>
-                </div>
-                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
-                    <h3 style="margin: 0 0 10px;">Есть ли примерочная?</h3>
-                    <p style="margin: 0; color: #666;">Да, вы можете примерить товары в нашем магазине по адресу.</p>
-                </div>
-                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
-                    <h3 style="margin: 0 0 10px;">Возврат товара?</h3>
-                    <p style="margin: 0; color: #666;">Товар можно вернуть в течение 14 дней в хорошем состоянии.</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Кнопка назад -->
-        <div style="text-align: center; margin-top: 50px;">
-            <a href="/" style="text-decoration: none; color: #064d9e;">← Вернуться на главную</a>
+    </div>
+</section>
+
+<!-- Кнопка "Задать вопрос" (быстрый контакт) -->
+<section style="padding: 60px 0;">
+    <div class="container text-center">
+        <div style="max-width: 700px; margin: 0 auto;">
+            <h3 style="color: var(--eco-green); margin-bottom: 15px;">Остались вопросы?</h3>
+            <p style="margin-bottom: 25px;">Закажите обратный звонок, и мы перезвоним в течение 15 минут</p>
+            <button class="btn-outline-eco" style="padding: 12px 40px; border-radius: 50px; font-weight: bold;">Заказать звонок</button>
         </div>
     </div>
 </section>
