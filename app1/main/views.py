@@ -93,12 +93,10 @@ def contacts(request):
 
 
 def cart(request):
-    cart_items = []
-    total_price = 0
-    return render(request, 'cart.html', {
-        'cart_items': cart_items,
-        'total_price': total_price
-    })
+    products = Product.objects.all()
+    # Создаём словарь {id товара: количество на складе}
+    product_stock = {p.id: p.stock_quantity for p in products}
+    return render(request, 'cart.html', {'product_stock': product_stock})
 
 # Оформление заказа (упрощённая версия)
 def checkout(request):

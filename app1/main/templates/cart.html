@@ -52,6 +52,8 @@
 </section>
 
 <script>
+
+window.productStock = {{ product_stock|safe }};
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
 });
@@ -120,13 +122,21 @@ function loadCart() {
 }
 
 function updateQuantity(productId, newQuantity) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let item = cart.find(i => i.id === productId);
+    
+    // Получаем максимальное количество со склада
+    let maxStock = window.productStock[productId] || 99;
+    
     if (newQuantity < 1) {
         removeFromCart(productId);
         return;
     }
     
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let item = cart.find(i => i.id === productId);
+    if (newQuantity > maxStock) {
+        alert(`Извините, на складе только ${maxStock} шт. этого товара`);
+        return;
+    }
     
     if (item) {
         item.quantity = newQuantity;
@@ -134,7 +144,6 @@ function updateQuantity(productId, newQuantity) {
         loadCart();
     }
 }
-
 function removeFromCart(productId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart = cart.filter(item => item.id !== productId);
