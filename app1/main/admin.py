@@ -10,10 +10,27 @@ class CustomUserAdmin(UserAdmin):
         ('Дополнительная информация', {'fields': ('role', 'phone', 'address')}),
     )
 
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'guest_name', 'user', 'phone', 'total_amount', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    inlines = [OrderItemInline]
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'is_approved', 'created_at')
+    list_filter = ('is_approved', 'rating')
+    search_fields = ('comment', 'user__username')
+    list_editable = ('is_approved',)  # можно менять статус прямо из списка
+
+    
 # Регистрация моделей
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Category)
 admin.site.register(Product)
-admin.site.register(Order)
 admin.site.register(OrderItem)
-admin.site.register(Review)

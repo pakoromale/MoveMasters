@@ -5,29 +5,95 @@
 {% block content %}
 <div class="container py-5">
     <h1 class="mb-4 eco-text">Каталог товаров</h1>
-    
+    <!-- Строка поиска -->
+    <div style="margin-bottom: 30px;">
+        <form method="get" action="{% url 'catalog' %}" style="display: flex; flex-wrap: wrap; gap: 10px; max-width: 500px;">
+            <input type="text" name="q" placeholder="Поиск по названию, бренду..." class="form-control" style="flex: 1; border-radius: 50px;" value="{{ request.GET.q }}">
+            <button type="submit" class="eco-btn" style="border-radius: 50px; padding: 10px 20px;">🔍 Найти</button>
+        </form>
+        {% if request.GET.q %}
+        <div class="alert alert-info mt-3">
+            Результаты поиска по запросу: <strong>{{ request.GET.q }}</strong>
+            <a href="{% url 'catalog' %}" class="float-end">Сбросить</a>
+        </div>
+        {% endif %}
+    </div>
+        
     <div class="row">
         
+        <!-- БЛОК ФИЛЬТРОВ (улучшенный) -->
         <div class="col-md-3 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Фильтры</h5>
-                    <div class="list-group">
-                        <a href="{% url 'catalog' %}" class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}">
-                            Все товары
-                        </a>
-                        {% for category in categories %}
-                        <a href="{% url 'catalog' %}?category={{ category.id }}" 
-                           class="list-group-item list-group-item-action {% if request.GET.category == category.id|stringformat:'i' %}active{% endif %}">
-                            {{ category.name }}
-                        </a>
-                        {% endfor %}
-                    </div>
+                    
+                    <form method="get">
+                        <!-- Фильтр по категориям -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Категория</label>
+                            <select name="category" class="form-select">
+                                <option value="">Все категории</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if request.GET.category|add:"0" == category.id %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Фильтр по размеру -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Размер</label>
+                            <select name="size" class="form-select">
+                                <option value="">Любой</option>
+                                <option value="XS" {% if request.GET.size == 'XS' %}selected{% endif %}>XS</option>
+                                <option value="S" {% if request.GET.size == 'S' %}selected{% endif %}>S</option>
+                                <option value="M" {% if request.GET.size == 'M' %}selected{% endif %}>M</option>
+                                <option value="L" {% if request.GET.size == 'L' %}selected{% endif %}>L</option>
+                                <option value="XL" {% if request.GET.size == 'XL' %}selected{% endif %}>XL</option>
+                                <option value="XXL" {% if request.GET.size == 'XXL' %}selected{% endif %}>XXL</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Фильтр по цвету -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Цвет</label>
+                            <select name="color" class="form-select">
+                                <option value="">Любой</option>
+                                <option value="черный" {% if request.GET.color == 'черный' %}selected{% endif %}>Черный</option>
+                                <option value="белый" {% if request.GET.color == 'белый' %}selected{% endif %}>Белый</option>
+                                <option value="красный" {% if request.GET.color == 'красный' %}selected{% endif %}>Красный</option>
+                                <option value="синий" {% if request.GET.color == 'синий' %}selected{% endif %}>Синий</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Фильтр по бренду -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Бренд</label>
+                            <select name="brand" class="form-select">
+                                <option value="">Любой</option>
+                                <option value="Nike" {% if request.GET.brand == 'Nike' %}selected{% endif %}>Nike</option>
+                                <option value="Adidas" {% if request.GET.brand == 'Adidas' %}selected{% endif %}>Adidas</option>
+                                <option value="Puma" {% if request.GET.brand == 'Puma' %}selected{% endif %}>Puma</option>
+                                <option value="Reebok" {% if request.GET.brand == 'Reebok' %}selected{% endif %}>Reebok</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Фильтр по цене -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Цена</label>
+                            <input type="number" name="price_min" class="form-control mb-2" placeholder="От" value="{{ request.GET.price_min }}">
+                            <input type="number" name="price_max" class="form-control" placeholder="До" value="{{ request.GET.price_max }}">
+                        </div>
+                        
+                        <button type="submit" class="btn eco-btn w-100">Применить</button>
+                        <a href="{% url 'catalog' %}" class="btn btn-outline-secondary w-100 mt-2">Сбросить</a>
+                    </form>
                 </div>
             </div>
         </div>
         
-        
+        <!-- БЛОК ТОВАРОВ -->
         <div class="col-md-9">
             <div class="row">
                 {% for product in products %}
@@ -55,10 +121,8 @@
                 <div class="col-12 text-center py-5">
                     <div class="alert alert-info">
                         <h4>Товары не найдены</h4>
-                        <p>Добавьте товары через админку или выберите другую категорию.</p>
-                        <a href="/admin/" class="btn eco-btn mt-2">
-                            <i class="bi bi-plus-circle me-1"></i>Добавить товар
-                        </a>
+                        <p>Попробуйте изменить параметры фильтрации.</p>
+                        <a href="{% url 'catalog' %}" class="btn eco-btn mt-2">Сбросить фильтры</a>
                     </div>
                 </div>
                 {% endfor %}

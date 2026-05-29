@@ -72,41 +72,72 @@
         </div>
     </div>
 
-    <!-- Отзывы -->
     <div class="mt-5">
-        <h3 class="mb-4">Отзывы</h3>
-        
-        {% if reviews %}
-        <div class="row">
-            {% for review in reviews %}
-            <div class="col-md-6 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <h6 class="card-title">{{ review.user.username }}</h6>
-                            <div class="text-warning">
-                                {% for i in "12345" %}
-                                    {% if forloop.counter <= review.rating %}
-                                        <i class="bi bi-star-fill"></i>
-                                    {% else %}
-                                        <i class="bi bi-star"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
+    <h3 class="mb-4">Отзывы</h3>
+    
+    <!-- ФОРМА ОТПРАВКИ ОТЗЫВА -->
+    {% if user.is_authenticated %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Оставить отзыв</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Оценка</label>
+                    <select name="rating" class="form-select" style="width: auto;">
+                        <option value="5">5 — Отлично</option>
+                        <option value="4">4 — Хорошо</option>
+                        <option value="3">3 — Средне</option>
+                        <option value="2">2 — Плохо</option>
+                        <option value="1">1 — Ужасно</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Комментарий</label>
+                    <textarea name="comment" class="form-control" rows="3" required placeholder="Поделитесь впечатлениями..."></textarea>
+                </div>
+                <button type="submit" class="btn eco-btn">Отправить отзыв</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить отзыв.</p>
+    </div>
+    {% endif %}
+    
+    <!-- СПИСОК ОТЗЫВОВ -->
+    {% if reviews %}
+    <div class="row">
+        {% for review in reviews %}
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h6 class="card-title">{{ review.user.username }}</h6>
+                        <div class="text-warning">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <p class="card-text">{{ review.comment }}</p>
-                        <small class="text-muted">{{ review.created_at|date:"d.m.Y H:i" }}</small>
                     </div>
+                    <p class="card-text">{{ review.comment }}</p>
+                    <small class="text-muted">{{ review.created_at|date:"d.m.Y H:i" }}</small>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        {% else %}
-        <div class="alert alert-info">
-            <p>Пока нет отзывов. Будьте первым!</p>
-        </div>
-        {% endif %}
+        {% endfor %}
     </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>Пока нет отзывов. Будьте первым!</p>
+    </div>
+    {% endif %}
+</div>
 </div>
 {% endblock %}
 

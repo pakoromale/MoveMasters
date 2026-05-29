@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib import messages
 from django import forms
+from django.db import models
 from django.http import JsonResponse
 import json
 from .models import Product, Category, Review, Order, OrderItem
@@ -36,27 +37,83 @@ def home(request):
     products = Product.objects.filter(is_active=True)[:8]
     return render(request, 'home.html', {'products': products})
 
+from django.db import models  # добавь этот импорт в начало файла
+
 def catalog(request):
-    category_id = request.GET.get('category')
-    
-    if category_id:
-        products = Product.objects.filter(category_id=category_id, is_active=True)
-    else:
-        products = Product.objects.filter(is_active=True)
-    
+    products = Product.objects.filter(is_active=True)
     categories = Category.objects.all()
-    return render(request, 'catalog.html', {
+    
+    # ПОИСК (добавь этот блок в самое начало, после фильтров)
+    query = request.GET.get('q')
+    if query:
+        products = products.filter(
+            models.Q(name__icontains=query) |
+            models.Q(description__icontains=query) |
+            models.Q(brand__icontains=query)
+        )
+    
+    # Фильтр по категории
+    category_id = request.GET.get('category')
+    if category_id:
+        products = products.filter(category_id=category_id)
+    
+    # Фильтр по размеру
+    size = request.GET.get('size')
+    if size:
+        products = products.filter(size=size)
+    
+    # Фильтр по цвету
+    color = request.GET.get('color')
+    if color:
+        products = products.filter(color=color)
+    
+    # Фильтр по бренду
+    brand = request.GET.get('brand')
+    if brand:
+        products = products.filter(brand=brand)
+    
+    # Фильтр по цене
+    price_min = request.GET.get('price_min')
+    if price_min:
+        products = products.filter(price__gte=price_min)
+    
+    price_max = request.GET.get('price_max')
+    if price_max:
+        products = products.filter(price__lte=price_max)
+    
+    context = {
         'products': products,
-        'categories': categories
-    })
+        'categories': categories,
+    }
+    return render(request, 'catalog.html', context)
 
 def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    reviews = Review.objects.filter(product=product, is_approved=True)
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    reviews = Review.objects.filter(product=product, is_approved=True).order_by('-created_at')
+    
+    if request.method == 'POST' and request.user.is_authenticated:
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        if rating and comment:
+            Review.objects.create(
+                product=product,
+                user=request.user,
+                rating=rating,
+                comment=comment,
+                is_approved=False
+            )
+            messages.success(request, 'Спасибо за отзыв! Он появится после проверки.')
+        else:
+            messages.error(request, 'Заполните все поля')
+        
+        return redirect('product_detail', product_id=product_id)
+    
     return render(request, 'product.html', {
         'product': product,
         'reviews': reviews
     })
+
 
 def about(request):
     return render(request, 'about.html')
@@ -98,26 +155,57 @@ def cart(request):
     product_stock = {p.id: p.stock_quantity for p in products}
     return render(request, 'cart.html', {'product_stock': product_stock})
 
-# Оформление заказа (упрощённая версия)
 def checkout(request):
     if request.method == 'POST':
-        try:
-            name = request.POST.get('name', '')
-            email = request.POST.get('email', '')
-            address = request.POST.get('address', '')
-            
-            order_number = str(abs(hash(name + email + str(request.user.id if request.user.is_authenticated else ''))))[-6:]
-            
-            messages.success(request, 
-                f'✅ Заказ оформлен! {name}, мы свяжемся с вами по email {email}. ' +
-                f'Номер заказа: #{order_number}'
-            )
-            
-            return redirect('home')
-            
-        except Exception as e:
-            messages.error(request, f'Ошибка при оформлении заказа: {str(e)}')
+        # Получаем данные из формы
+        print("=== ПОСТУПИЛ ЗАПРОС НА ОФОРМЛЕНИЕ ===")
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        cart_data = request.POST.get('cart_data')  # JSON с товарами из корзины
+        
+        print(f"Имя: {name}, Телефон: {phone}")  # ← ОТЛАДКА
+
+        if not cart_data:
+            messages.error(request, 'Корзина пуста')
             return redirect('cart')
+        
+        # Разбираем корзину
+        cart = json.loads(cart_data)
+        
+        # Считаем общую сумму
+        total = 0
+        for item in cart:
+            total += float(item['price']) * int(item['quantity'])
+        
+        # Создаём заказ
+        order = Order.objects.create(
+            guest_name=name,
+            guest_email=email,
+            phone=phone,
+            address=address,
+            total_amount=total,
+            status='pending'
+        )
+        
+        # ПРИВЯЗКА К ПОЛЬЗОВАТЕЛЮ (если авторизован)
+        if request.user.is_authenticated:
+            order.user = request.user
+            order.save()
+        
+        # Создаём позиции заказа
+        for item in cart:
+            product = Product.objects.get(id=item['id'])
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=item['quantity'],
+                unit_price=item['price']
+            )
+        
+        messages.success(request, f'Заказ #{order.id} успешно оформлен!')
+        return redirect('home')
     
     return redirect('cart')
 
@@ -130,6 +218,8 @@ def profile(request):
         user = request.user
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
+        user.phone = request.POST.get('phone', '')      # ← добавить
+        user.address = request.POST.get('address', '')  # ← добавить
         user.save()
         messages.success(request, 'Данные успешно обновлены!')
         return redirect('profile')

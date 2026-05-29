@@ -38,6 +38,19 @@ class Product(models.Model):
     material = models.CharField("Материал", max_length=100, blank=True)
     is_active = models.BooleanField("Активен", default=True)
     created_at = models.DateTimeField("Дата создания", auto_now_add=True)
+
+    SIZE_CHOICES = [
+        ('XS', 'XS'),
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL'),
+        ('XXL', 'XXL'),
+    ]
+    
+    size = models.CharField("Размер", max_length=5, choices=SIZE_CHOICES, blank=True, null=True)
+    color = models.CharField("Цвет", max_length=50, blank=True, null=True)
+    brand = models.CharField("Бренд", max_length=100, blank=True, null=True)
     
     class Meta:
         verbose_name = "Товар"
@@ -115,8 +128,4 @@ class Review(models.Model):
         verbose_name_plural = "Отзывы"
     
     def __str__(self):
-        return f"Отзыв от {self.user} на {self.product}"
-
-    
-    def __str__(self):
-        return self.title
+        return f"Отзыв от {self.user.username} на {self.product.name}"
